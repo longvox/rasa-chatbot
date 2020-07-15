@@ -83,7 +83,7 @@ class InfoForm(FormAction):
                     dispatcher.utter_template(
                         'utter_input_email_again', tracker)
                     slot_values[slot] = None
-            elif slot == 'phoone':
+            elif slot == 'phone':
                 if not self.valid_phone(value.lower()):
                     dispatcher.utter_template(
                         'utter_input_phone_again', tracker)
