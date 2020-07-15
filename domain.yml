@@ -1,0 +1,30 @@
+intents:
+  - greet
+  - goodbye
+  - ask_name
+  - hi_rasa
+
+entries:
+  - name
+
+slots:
+  name:
+    type: text
+    initial_value: "human"
+
+actions:
+  - action_get_name
+
+responses:
+  utter_question_name:
+    - text: "Hello, What's your anme?"
+
+  utter_hi_human:
+    - text: "hello {name}"
+
+  utter_bye_human:
+    - text: "bye {name}"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
