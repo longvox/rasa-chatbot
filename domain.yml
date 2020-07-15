@@ -9,7 +9,7 @@ intents:
 forms:
   - info_form
 
-entries:
+entities:
   - name
   - email
   - phone

@@ -82,13 +82,12 @@ class InfoForm(FormAction):
                 if not self.valid_email(value.lower()):
                     dispatcher.utter_template(
                         'utter_input_email_again', tracker)
-                    slot_values[slot] = None
             elif slot == 'phone':
                 if not self.valid_phone(value.lower()):
                     dispatcher.utter_template(
                         'utter_input_phone_again', tracker)
 
-        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+        return []
 
     def submit(self,
                dispatcher: CollectingDispatcher,
@@ -96,7 +95,7 @@ class InfoForm(FormAction):
                domain: Dict[Text, Any]) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
-        print(tracker.current_state())
+        # print(tracker.current_state())
         # utter submit template
         dispatcher.utter_template('utter_submit', tracker)
         return []
