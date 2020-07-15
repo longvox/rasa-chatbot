@@ -2,28 +2,58 @@ intents:
   - greet
   - goodbye
   - ask_name
+  - ask_email
+  - ask_phone
   - hi_rasa
+
+forms:
+  - info_form
 
 entries:
   - name
+  - email
+  - phone
 
 slots:
   name:
     type: text
     initial_value: "human"
+  email:
+    type: text
+    initial_value: "example@example.com"
+  phone:
+    type: text
+    initial_value: "000000000000"
 
 actions:
   - action_get_name
 
 responses:
   utter_question_name:
-    - text: "Hello, What's your anme?"
+    - text: "Hello, What's your name?"
+
+  utter_question_email:
+    - text: "what's your email address?"
+
+  utter_input_email_again:
+    - text: "please enter your email address in a valid format!"
+
+  utter_question_phone:
+    - text: "what's your telephone number?"
+
+  utter_input_phone_again:
+    - text: "please enter your phone in a valid format"
 
   utter_hi_human:
     - text: "hello {name}"
 
   utter_bye_human:
     - text: "bye {name}"
+
+  utter_submit:
+    - text: "All done! \n
+        email: {email} \n
+        phone: {phone}"
 
 session_config:
   session_expiration_time: 60
