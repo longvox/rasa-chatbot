@@ -12,5 +12,12 @@
 * goodbye
   - utter_bye_human
 
-      
+## input email again
+* ask_email
+  - info_form
+  - utter_thank_you_update
 
+## input email again
+* ask_phone
+  - info_form
+  - utter_thank_you_update

@@ -17,6 +17,14 @@ from rasa_sdk.forms import FormAction, REQUESTED_SLOT
 import re
 
 
+def get_dict_certain_keys(dic, keys):
+    return dict(
+        zip(
+            keys, [dic[key] for key in keys]
+        )
+    )
+
+
 class action_get_name(Action):
 
     def name(self) -> Text:
@@ -49,7 +57,7 @@ class InfoForm(FormAction):
 
     @staticmethod
     def valid_phone(phone):
-        return bool(re.search(r"[0-9]{10}", phone))
+        return bool(re.search(r"^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$", phone))
 
     def validate(self,
                  dispatcher: CollectingDispatcher,
@@ -60,7 +68,8 @@ class InfoForm(FormAction):
         """
         # extract other slots that were not requested
         # but set by corresponding entity
-        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+        slot_values = get_dict_certain_keys(
+            tracker.slots, self.required_slots(tracker))
 
         # extract requested slot
         slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
@@ -77,15 +86,24 @@ class InfoForm(FormAction):
                                                "".format(slot_to_fill,
                                                          self.name()))
 
+        is_valid = True
         for slot, value in slot_values.items():
             if slot == 'email':
                 if not self.valid_email(value.lower()):
                     dispatcher.utter_template(
                         'utter_input_email_again', tracker)
+                    is_valid = False
+                    break
+
             elif slot == 'phone':
                 if not self.valid_phone(value.lower()):
                     dispatcher.utter_template(
                         'utter_input_phone_again', tracker)
+                    is_valid = False
+                    break
+
+        if is_valid:
+            dispatcher.utter_template('utter_submit', tracker)
 
         return []
 
@@ -97,5 +115,5 @@ class InfoForm(FormAction):
             after all required slots are filled"""
         # print(tracker.current_state())
         # utter submit template
-        dispatcher.utter_template('utter_submit', tracker)
+        # dispatcher.utter_template('utter_submit', tracker)
         return []

@@ -41,6 +41,9 @@ responses:
   utter_question_phone:
     - text: "what's your telephone number?"
 
+  utter_thank_you_update:
+    - text: "Thanks for the additional info"
+
   utter_input_phone_again:
     - text: "please enter your phone in a valid format"
 
