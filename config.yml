@@ -2,7 +2,29 @@
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
 pipeline:
-  - name: WhitespaceTokenizer
+  - name: SpacyNLP
+  - name: SpacyTokenizer
+  - name: CRFEntityExtractor
+    features:
+      [
+        ["low", "title", "upper"],
+        [
+          "bias",
+          "low",
+          "prefix5",
+          "prefix2",
+          "suffix5",
+          "suffix3",
+          "suffix2",
+          "upper",
+          "title",
+          "digit",
+          "pattern",
+        ],
+        ["low", "title", "upper"],
+      ]
+
+  # - name: WhitespaceTokenizer
   - name: RegexFeaturizer
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
