@@ -19,7 +19,7 @@
 
 ## intent:hi_rasa
 - hello rasa
-- hi rasa
+- hi rasae
 - hey rasa
 
 ## intent:ask_email
@@ -35,3 +35,10 @@
 
 ## regex:email
 - [a-zA-Z0-9_.+]+@[a-zA-Z]+[.][a-zA-Z0-9-.]+$
+
+## regex:name
+- /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
+
+## lookup:name.txt
+data/_lookup/name.txt
+

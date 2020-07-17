@@ -38,3 +38,11 @@ tracker_store:
 #  username: username
 #  password: password
 #  queue: queue
+
+# event_broker:
+#   type: pika
+#   url: localhost
+#   username: guest
+#   password: guest
+#   queues:
+#     - queue-1

@@ -13,8 +13,58 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 from rasa_sdk.forms import FormAction, REQUESTED_SLOT
-
+import asyncio
 import re
+import pika
+import uuid
+# from rasa.core.brokers.pika import PikaEventBroker
+# from rasa.core.tracker_store import InMemoryTrackerStore
+
+# pika_broker = PikaEventBroker('localhost',
+#                               'guest',
+#                               'guest',
+#                               queues=['rasa_events'])
+
+# tracker_store = InMemoryTrackerStore(
+#     domain="localhost", event_broker=pika_broker)
+
+
+class BotEvent(object):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host='localhost'))
+
+        self.channel = self.connection.channel()
+
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.callback_queue = result.method.queue
+
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True)
+
+    def on_response(self, ch, method, props, body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def call(self, message):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key='bot_event',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id,
+            ),
+            body=str(message))
+        # while self.response is None:
+        # self.connection.process_data_events()
+        return self.response
+
+
+bot_event = BotEvent()
 
 
 def get_dict_certain_keys(dic, keys):
@@ -34,6 +84,7 @@ class action_get_name(Action):
             dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(tracker.slots)
         print(tracker.latest_message['text'])
         name = tracker.latest_message['text'].split(' ')[-1]
 
@@ -107,13 +158,17 @@ class InfoForm(FormAction):
 
         return []
 
-    def submit(self,
-               dispatcher: CollectingDispatcher,
-               tracker: Tracker,
-               domain: Dict[Text, Any]) -> List[Dict]:
+    async def submit(self,
+                     dispatcher: CollectingDispatcher,
+                     tracker: Tracker,
+                     domain: Dict[Text, Any]) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
         # print(tracker.current_state())
         # utter submit template
         # dispatcher.utter_template('utter_submit', tracker)
+        print(tracker.slots)
+        email = tracker.slots["email"]
+        phone = tracker.slots["phone"]
+        bot_event.call({"email": email, "phone": phone})
         return []
